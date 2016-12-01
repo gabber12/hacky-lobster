@@ -51,7 +51,6 @@ render() {
     return (
       <DrawerLayoutAndroid
         drawerWidth={300}
-        drawerPosition={DrawerLayoutAndroid.positions.Left}
         renderNavigationView={() => navigationView}>
         <ToolbarAndroid
           style={{height: 50, backgroundColor: '#FFF'}}
@@ -85,12 +84,7 @@ render() {
       data:data
     })
   }
-  changeMode = () => {
-  const newMode = this.state.mode === Picker.MODE_DIALOG
-      ? Picker.MODE_DROPDOWN
-      : Picker.MODE_DIALOG;
-  this.setState({mode: newMode});
-};
+
   onActionSelected(position) {
 if (position === 0) { // index of 'Settings'
   showSettings();
