@@ -101,32 +101,17 @@ exports[`test renders correctly 1`] = `
               },
             ]
           }>
-          <View
-            style={undefined}>
-            <RCTPicker
-              items={
-                Array [
-                  Object {
-                    "label": "hello",
-                    "value": "key0",
-                  },
-                  Object {
-                    "label": "world",
-                    "value": "key1",
-                  },
-                ]
+          <Text
+            accessible={true}
+            allowFontScaling={true}
+            ellipsizeMode="tail"
+            style={
+              Object {
+                "fontSize": 20,
               }
-              onChange={[Function]}
-              selectedIndex={0}
-              style={
-                Array [
-                  Object {
-                    "height": 216,
-                  },
-                  undefined,
-                ]
-              } />
-          </View>
+            }>
+            Hacker News
+          </Text>
         </View>
         <ScrollView
           dataSource={
@@ -144,6 +129,11 @@ exports[`test renders correctly 1`] = `
           onLayout={[Function]}
           onScroll={[Function]}
           pageSize={1}
+          refreshControl={
+            <RefreshControl
+              onRefresh={[Function]}
+              refreshing={true} />
+          }
           removeClippedSubviews={true}
           renderRow={[Function]}
           scrollEventThrottle={50}
