@@ -79,3 +79,4 @@ captures/
 
 # Keystore files
 *.jks
+coverage/
