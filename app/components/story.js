@@ -31,18 +31,19 @@ export default class Story extends Component {
       background={TouchableNativeFeedback.SelectableBackground()}>
         <View style={styles.story}>
         <Text style={{flex: 2}}>{this.state.data.score}</Text>
-          <View style={{flex: 20}}>
+          <View style={{flex: 10}}>
           <Text style={{flex: 2}}>{this.state.data.title}</Text>
-          <Text style={{flex: 1}}>{this.state.data.url}</Text>
+          <Text style={{flex: 1, fontSize:10}}>{this.state.data.url}</Text>
         </View>
-        <View style={{flex: 3}}><Button onPress={this.onPressComments.bind(this)}
-  title="Learn More"
-  color="#841584"
-  accessibilityLabel="Learn more about this purple button"/></View>
+
       </View>
     </TouchableNativeFeedback>);
   }
 }
+// <View style={{flex: 3}}><Button onPress={this.onPressComments.bind(this)}
+// title="Learn More"
+// color="#841584"
+// accessibilityLabel="Learn more about this purple button"/></View>
 const styles = StyleSheet.create({story: {
   padding: 15,
   borderWidth: 1,
