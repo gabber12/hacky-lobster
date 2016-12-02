@@ -84,7 +84,9 @@ exports[`test renders correctly 1`] = `
               "borderColor": "red",
               "borderWidth": 1,
             },
-            undefined,
+            Object {
+              "flex": 1,
+            },
           ]
         }>
         <View
@@ -121,7 +123,8 @@ exports[`test renders correctly 1`] = `
           }
           initialListSize={10}
           onContentSizeChange={[Function]}
-          onEndReachedThreshold={1000}
+          onEndReached={[Function]}
+          onEndReachedThreshold={50}
           onKeyboardDidHide={undefined}
           onKeyboardDidShow={undefined}
           onKeyboardWillHide={undefined}

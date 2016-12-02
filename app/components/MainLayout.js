@@ -10,7 +10,7 @@ DrawerLayoutAndroid ,StatusBar,ToolbarAndroid,Picker,ListView,TouchableNativeFee
 import Story from "./story"
 import CommentLayout from "./CommentLayout"
 const Item = Picker.Item;
-
+const _list_item_buffer = 10;
 export default class MainLayout extends Component {
  state = {
   selected1: 'key1',
@@ -19,8 +19,10 @@ export default class MainLayout extends Component {
   color: 'red',
   mode: Picker.MODE_DROPDOWN,
 };
+
 constructor() {
   super();
+  this._data = [];
   this.state = {
       refreshing:true,
     dataSource: new ListView.DataSource({
@@ -32,9 +34,11 @@ constructor() {
      fetch('https://hacker-news.firebaseio.com/v0/topstories.json')
        .then((response) => response.json())
        .then((responseJson) => {
-         var data = responseJson.map((id) => {return {id:id, type:"dsa"}}).slice(0, 10);
-         console.log(data)
-         this.setState({refreshing:false,dataSource:this.state.dataSource.cloneWithRows(data)});
+           let _startIndex = this._data.length;
+         let endIndex = _startIndex + _list_item_buffer;
+         this._data = this._data.concat(responseJson.map((id) => {return {id:id, type:"dsa"}}).slice(_startIndex, endIndex));
+         console.log(this._data)
+         this.setState({refreshing:false,dataSource:this.state.dataSource.cloneWithRows(this._data)});
 
        });
  }
@@ -42,6 +46,7 @@ componentDidMount() {
   this.getPostData()
 }
 _onRefresh() {
+    this._data = [];
     this.setState({refreshing:true})
     this.getPostData()
 
@@ -57,15 +62,13 @@ render() {
     return (
       <DrawerLayoutAndroid
         drawerWidth={300}
-        renderNavigationView={() => navigationView}>
+        renderNavigationView={() => navigationView} style={{flex:1}}>
         <ToolbarAndroid
           style={{height: 50, backgroundColor: '#FFF'}}
           titleColor={'#000000'}
           actions={[{title: 'Settings', show: 'always'}]}
           onActionSelected={this.onActionSelected} >
           <Text style={{fontSize:20}}>Hacker News</Text>
-
-
         </ToolbarAndroid>
 
         <ListView
@@ -78,7 +81,9 @@ render() {
             refreshing={this.state.refreshing}
             onRefresh={this._onRefresh.bind(this)}
           />
-        }/>
+        }
+        onEndReachedThreshold={50}
+        onEndReached={this.getPostData.bind(this)}/>
         </DrawerLayoutAndroid>
     );
 
