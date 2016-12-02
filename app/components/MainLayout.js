@@ -5,12 +5,12 @@ StyleSheet,
 Text,
 Navigator,
 View,
-DrawerLayoutAndroid ,StatusBar,ToolbarAndroid,Picker,ListView,TouchableNativeFeedback
+DrawerLayoutAndroid ,StatusBar,ToolbarAndroid,Picker,ListView,TouchableNativeFeedback,RefreshControl
 } from 'react-native';
 import Story from "./story"
 import CommentLayout from "./CommentLayout"
 const Item = Picker.Item;
-
+const _list_item_buffer = 10;
 export default class MainLayout extends Component {
  state = {
   selected1: 'key1',
@@ -19,60 +19,71 @@ export default class MainLayout extends Component {
   color: 'red',
   mode: Picker.MODE_DROPDOWN,
 };
+
 constructor() {
   super();
-  const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-  // this.itemsRef = firebaseApp.database().ref();
+  this._data = [];
   this.state = {
+      refreshing:true,
     dataSource: new ListView.DataSource({
       rowHasChanged: (row1, row2) => row1 !== row2,
     })
   };
 }
+ getPostData() {
+     fetch('https://hacker-news.firebaseio.com/v0/topstories.json')
+       .then((response) => response.json())
+       .then((responseJson) => {
+           let _startIndex = this._data.length;
+         let endIndex = _startIndex + _list_item_buffer;
+         this._data = this._data.concat(responseJson.map((id) => {return {id:id, type:"dsa"}}).slice(_startIndex, endIndex));
+         console.log(this._data)
+         this.setState({refreshing:false,dataSource:this.state.dataSource.cloneWithRows(this._data)});
 
+       });
+ }
 componentDidMount() {
-  fetch('https://hacker-news.firebaseio.com/v0/topstories.json')
-    .then((response) => response.json())
-    .then((responseJson) => {
-      var data = responseJson.map((id) => {return {id:id, type:"dsa"}}).slice(0, 10);
-      console.log(data)
-      this.setState({dataSource:this.state.dataSource.cloneWithRows(data)})
-    });
+  this.getPostData()
 }
+_onRefresh() {
+    this._data = [];
+    this.setState({refreshing:true})
+    this.getPostData()
+
+}
+
 render() {
-
-
 
   var navigationView = (
       <View style={{flex: 1, backgroundColor: '#fff'}}>
-      <Text style={{margin: 10, fontSize: 15, textAlign: 'left'}}>Im in the Drawer!</Text>
+      <Text style={{margin: 10, fontSize: 15, textAlign: 'left'}}>Programming News</Text>
       </View>
     );
     return (
       <DrawerLayoutAndroid
         drawerWidth={300}
-        renderNavigationView={() => navigationView}>
+        renderNavigationView={() => navigationView} style={{flex:1}}>
         <ToolbarAndroid
           style={{height: 50, backgroundColor: '#FFF'}}
           titleColor={'#000000'}
           actions={[{title: 'Settings', show: 'always'}]}
           onActionSelected={this.onActionSelected} >
-
-          <Picker
-            style={styles.picker}
-            selectedValue={this.state.selected1}
-            onValueChange={this.onValueChange.bind(this, 'selected1')}>
-            <Item label="hello" value="key0" />
-            <Item label="world" value="key1" />
-          </Picker>
-
+          <Text style={{fontSize:20}}>Hacker News</Text>
         </ToolbarAndroid>
 
         <ListView
           dataSource={this.state.dataSource}
           renderRow={(rowData) =>
             <Story type={rowData.type} id={rowData.id} goToComment={this.goToComment.bind(this)}/>
-          }/>
+          }
+          refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh.bind(this)}
+          />
+        }
+        onEndReachedThreshold={50}
+        onEndReached={this.getPostData.bind(this)}/>
         </DrawerLayoutAndroid>
     );
 
@@ -86,17 +97,23 @@ render() {
   }
 
   onActionSelected(position) {
-if (position === 0) { // index of 'Settings'
-  showSettings();
+    if (position === 0) { // index of 'Settings'
+      showSettings();
+    }
+  }
+  onValueChange = (key: string, value: string) => {
+    const newState = {};
+    newState[key] = value;
+    this.setState(newState);
+  };
 }
-}
-onValueChange = (key: string, value: string) => {
-  const newState = {};
-  newState[key] = value;
-  this.setState(newState);
-};
-}
-
+// <Picker
+//   style={styles.picker}
+//   selectedValue={this.state.selected1}
+//   onValueChange={this.onValueChange.bind(this, 'selected1')}>
+//   <Item label="hello" value="key0" />
+//   <Item label="world" value="key1" />
+// </Picker>
 
 const styles = StyleSheet.create({
   container: {
